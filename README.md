@@ -1,7 +1,7 @@
 # odds-based-game
 
 ## Project Description
-This project is an implementation of a simple betting game based on odds. It is developed using **Kotlin**, **Spring WebFlux**, and uses **H2 Database** for data storage. The game allows players to register, place bets on numbers between 1 and 10, and win or lose based on the game's rules as described below.
+This project is an implementation of a simple betting game based on odds. It is developed using **Kotlin**, **Spring WebFlux**, and uses **PostgresSQL** and **H2 Database** for data storage. The game allows players to register, place bets on numbers between 1 and 10, and win or lose based on the game's rules as described below.
 
 ### Main Functionalities
 1. **Player Registration**: A player can register with a name, surname, and a unique username.
@@ -16,6 +16,7 @@ This project is an implementation of a simple betting game based on odds. It is 
 ### System Requirements
 - **Java 17**
 - **Gradle**
+- **PostgreSQL**
 - **H2 Database**
 
 
@@ -166,17 +167,34 @@ This project is an implementation of a simple betting game based on odds. It is 
     ```
    ./gradlew test
 
-### How to Run the Application with Docker(Optional)
+### How to Run the Application with Docker (Optional)
 
-1. **Build the Docker image**:
+This project also supports running the application along with **PostgreSQL** and **H2 Database** using **Docker Compose**.
+
+#### Using Docker Compose
+
+1. **Create and start the containers**:  
+   The `docker-compose.yml` file is already configured to start two services: one for the application and one for the PostgreSQL database.
+
+   To build and start the containers, run the following command in the root of the project:
+
    ```bash
-   docker build -t odds-based-game .
+   docker-compose up --build
 
-2. **Run the container docker**:
+2. **Accessing the application:**:
+  
+    Now, you can access the application at http://localhost:8080.
+
+
+3. **Stop the containers:**:
     ```bash
-   docker run -p 8080:8080 odds-based-game
+   docker-compose down
+
+OBS: **PostgreSQL and H2 Database Configuration** 
+
+    The application is configured to use PostgreSQL as the primary database when running with Docker. The PostgreSQL database runs in a container and is linked to the application container.
+    The H2 Database is used for in-memory operations and during local development when Docker is not used.
 
 
-Now, you can access the application at http://localhost:8080.
 
 This README provides detailed instructions and descriptions for a Kotlin project using Gradle, Spring WebFlux, and H2 Database.
