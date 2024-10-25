@@ -50,8 +50,8 @@ class BetServiceImpl @Autowired constructor(
         betNumber: Int
     ): Mono<Bet> {
         return this.playerService.getPlayer(username)
-            .flatMap { player -> validateBet(player, betAmount) }                   // player validate
-            .flatMap { player -> processBet(player, betAmount, betNumber) }         // make a bet
+            .flatMap { player -> validateBet(player, betAmount) }
+            .flatMap { player -> processBet(player, betAmount, betNumber) }
     }
 
 
@@ -64,15 +64,15 @@ class BetServiceImpl @Autowired constructor(
         betAmount: Double,
         betNumber: Int
     ): Mono<Bet> {
-        val generatedNumber = generateRandomNumber()                                        // get  the random number
-        val winnings = calculateWinnings(betNumber, generatedNumber, betAmount)             // calculate the result
+        val generatedNumber = generateRandomNumber()
+        val winnings = calculateWinnings(betNumber, generatedNumber, betAmount)
 
-        player.balance -= betAmount                                                         // remove the bet value
-        player.balance += winnings                                                          // add the winning value
+        player.balance -= betAmount
+        player.balance += winnings
 
-        return this.playerService.updatePlayerAmount(player)                                // update the player amount
+        return this.playerService.updatePlayerAmount(player)
             .flatMap {
-                val bet = Bet(                                                              //create a betting register
+                val bet = Bet(
                     playerId = player.id,
                     betAmount = betAmount,
                     betNumber = betNumber,
@@ -81,7 +81,7 @@ class BetServiceImpl @Autowired constructor(
                     winnings = winnings
                 )
 
-                this.betRepository.save(bet)                                                     //create a player transaction
+                this.betRepository.save(bet)
                     .flatMap { savedBet ->
                         registerTransaction(player.username, savedBet.betAmount).thenReturn(savedBet)
                     }
@@ -92,9 +92,9 @@ class BetServiceImpl @Autowired constructor(
 
     private fun validateBet(player: Player, betAmount: Double): Mono<Player> {
         return if (player.balance < betAmount) {
-            Mono.error(InsufficientBalanceException("Insufficient balance in ${player.surname} wallet."))       // check if has the enough money
+            Mono.error(InsufficientBalanceException("Insufficient balance in ${player.surname} wallet."))
         } else if (betAmount > player.balance * BET_SAFETY_FACTOR) {
-            Mono.error(SafeBetException("You cannot bet more than 50% of your(${player.username}) balance."))   // security conditions, not allow bet more than 50% of the balance
+            Mono.error(SafeBetException("You cannot bet more than 50% of your(${player.username}) balance."))
         } else {
             Mono.just(player)
         }
@@ -102,7 +102,7 @@ class BetServiceImpl @Autowired constructor(
 
 
     private fun registerTransaction(username: String, amount: Double): Mono<Transaction> {
-        return transactionService.registerTransaction(                          // register a new transaction
+        return transactionService.registerTransaction(
             CreateTransactionRequest(
                 playerUsername = username,
                 amount = amount,
@@ -113,16 +113,16 @@ class BetServiceImpl @Autowired constructor(
 
 
     private fun generateRandomNumber(): Int {
-        return (1..MULTIPLIER_FACTOR_10).random()                   //generate a random number
+        return (1..MULTIPLIER_FACTOR_10).random()
     }
 
     private fun calculateWinnings(betNumber: Int, generatedNumber: Int, betAmount: Double): Double {
-        val difference = abs((betNumber - generatedNumber).toDouble()).toInt()      // calculate the difference between the player's number and the random number
+        val difference = abs((betNumber - generatedNumber).toDouble()).toInt()
 
         return when (difference) {
-            0 -> betAmount * MULTIPLIER_FACTOR_10                                   // if the distance is 0, player win 10x the bet value
-            1 -> betAmount * MULTIPLIER_FACTOR_5                                    // if the distance is 1/-1, player win 5x the bet value
-            2 -> betAmount * MULTIPLIER_FACTOR_HALF                                 // if the distance is 2/-2, player win 0.5x the bet value
+            0 -> betAmount * MULTIPLIER_FACTOR_10
+            1 -> betAmount * MULTIPLIER_FACTOR_5
+            2 -> betAmount * MULTIPLIER_FACTOR_HALF
             else -> 0.0
         }
     }

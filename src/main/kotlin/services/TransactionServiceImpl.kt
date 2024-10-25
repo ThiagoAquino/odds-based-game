@@ -19,12 +19,12 @@ class TransactionServiceImpl @Autowired constructor(
      * Method responsible for registering all transactions. Bet or Depósit
      */
     override fun registerTransaction(createTransactionRequest: CreateTransactionRequest): Mono<Transaction> {
-        return this.playerService.getPlayer(createTransactionRequest.playerUsername) // Get player on database by username
-            .flatMap { player ->                                                 // access the player inside the mono
-                player.balance += createTransactionRequest.amount                   // add amount in player wallet
-                this.playerService.updatePlayerAmount(player)                   // update the player balance
+        return this.playerService.getPlayer(createTransactionRequest.playerUsername)
+            .flatMap { player ->
+                player.balance += createTransactionRequest.amount
+                this.playerService.updatePlayerAmount(player)
                     .flatMap {
-                        this.transactionRepository.save(                        // create a transaction, registering this operation
+                        this.transactionRepository.save(
                             Transaction(
                                 playerId = player.id,
                                 amount = createTransactionRequest.amount,
@@ -41,9 +41,9 @@ class TransactionServiceImpl @Autowired constructor(
      * Responsible to get all the transactions by user
      */
     override fun getPlayerTransaction(username: String): Flux<Transaction> {
-        return this.playerService.getPlayer(username)                       // get the user, and check if exists
+        return this.playerService.getPlayer(username)
             .flatMapMany { player ->
-                this.transactionRepository.findAllByPlayerId(player.id)     // get all transactions by user.
+                this.transactionRepository.findAllByPlayerId(player.id)
 
             }
     }

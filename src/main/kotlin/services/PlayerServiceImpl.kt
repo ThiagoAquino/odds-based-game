@@ -29,12 +29,12 @@ class PlayerServiceImpl @Autowired constructor(
      * Create a new player
      */
     override fun registerPlayer(createPlayerRequest: CreatePlayerRequest): Mono<Player> {
-        return this.playerRepository.findByUsername(createPlayerRequest.username)       // Check if the username is free
+        return this.playerRepository.findByUsername(createPlayerRequest.username)
             .flatMap<Player> {
-                Mono.error(AlreadyExistsException("Username ${createPlayerRequest.username} already exists."))  // if not, throw exception
+                Mono.error(AlreadyExistsException("Username ${createPlayerRequest.username} already exists."))
             }
-            .switchIfEmpty(                                                                     // if it's free, create a new player
-                Mono.defer {                                                                    // used to daly the creation of the player
+            .switchIfEmpty(
+                Mono.defer {
                     this.playerRepository.save(
                         Player(
                             name = createPlayerRequest.name,
@@ -61,9 +61,9 @@ class PlayerServiceImpl @Autowired constructor(
      * Return the leaderboard.
      */
     override fun getLeaderboard(): Flux<Player> {
-        return this.playerRepository.findAll()                      // get all the player
-            .sort(compareByDescending { it.balance })               // order by descendent
-            .take(10)                                           // limited by 10 users
+        return this.playerRepository.findAll()
+            .sort(compareByDescending { it.balance })
+            .take(10)
     }
 
 }
