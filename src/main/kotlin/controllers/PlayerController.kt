@@ -17,7 +17,7 @@ class PlayerController @Autowired constructor(
     private val playerService: PlayerService
 ) {
 
-    @PostMapping("")
+    @PostMapping()
     fun registerPlayer(@RequestBody playerRequest: CreatePlayerRequest): Mono<PlayerResponse> {
         return playerService.registerPlayer(playerRequest).map {
             PlayerResponse(
@@ -30,7 +30,7 @@ class PlayerController @Autowired constructor(
         }
     }
 
-    @GetMapping("")
+    @GetMapping()
     fun getPlayer(@RequestParam username: String): Mono<PlayerResponse> {
         return playerService.getPlayer(username)
             .map {

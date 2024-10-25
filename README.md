@@ -97,7 +97,7 @@ This project is an implementation of a simple betting game based on odds. It is 
      }
      ```
 
-- **GET** `/bet/{username}`  
+- **GET** `/bet?username={username}`  
   Retrieves all bets placed by a player.
    - **Response**:
      ```json
@@ -134,7 +134,7 @@ This project is an implementation of a simple betting game based on odds. It is 
      }
      ```
 
-- **GET** `/transaction/{username}`  
+- **GET** `/transaction?username={username}`  
   Retrieves all transactions made by a player.
    - **Response**:
      ```json

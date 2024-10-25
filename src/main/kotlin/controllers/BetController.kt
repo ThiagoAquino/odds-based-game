@@ -35,8 +35,8 @@ class BetController @Autowired constructor(
         }
     }
 
-    @GetMapping("/{username}")
-    fun getPlayerBets(@PathVariable username: String): Flux<BetResponse> {
+    @GetMapping()
+    fun getPlayerBets(@RequestParam username: String): Flux<BetResponse> {
         return this.betService.getPlayerBets(username)
             .map {
                 BetResponse(

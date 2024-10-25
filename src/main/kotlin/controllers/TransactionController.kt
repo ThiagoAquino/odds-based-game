@@ -14,8 +14,8 @@ class TransactionController @Autowired constructor(
     private val transactionService: TransactionService
 ) {
 
-    @GetMapping("/{username}")
-    fun getPlayerTransactions(@PathVariable username: String): Flux<TransactionResponse> {
+    @GetMapping()
+    fun getPlayerTransactions(@RequestParam username: String): Flux<TransactionResponse> {
         return this.transactionService.getPlayerTransaction(username)
             .map { TransactionResponse(it.id, username, it.amount, it.type) }
     }
