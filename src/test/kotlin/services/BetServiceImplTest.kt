@@ -5,7 +5,7 @@ import dto.enum.TransactionTypeEnum
 import odds.domain.Bet
 import odds.domain.Player
 import odds.domain.Transaction
-import odds.dto.CreateTransactionDTO
+import odds.dto.CreateTransactionRequest
 import odds.exceptions.InsufficientBalanceException
 import odds.exceptions.SafeBetException
 import odds.repositories.BetRepository
@@ -80,7 +80,7 @@ class BetServiceImplTest {
         whenever(this.playerService.getPlayer(this.player.username)).thenReturn(Mono.just(this.player))
         whenever(this.playerService.updatePlayerAmount(this.player)).thenReturn(Mono.just(this.player))
         whenever(this.betRepository.save(any<Bet>())).thenReturn(Mono.just(this.bet))
-        whenever(this.transactionService.registerTransaction(any<CreateTransactionDTO>())).thenReturn(
+        whenever(this.transactionService.registerTransaction(any<CreateTransactionRequest>())).thenReturn(
             Mono.just(
                 Transaction(
                     1,
@@ -98,7 +98,7 @@ class BetServiceImplTest {
             .expectNextMatches { it.betAmount == this.bet.betAmount && it.playerId == this.player.id }
             .verifyComplete()
 
-        verify(this.transactionService).registerTransaction(any<CreateTransactionDTO>())
+        verify(this.transactionService).registerTransaction(any<CreateTransactionRequest>())
     }
 
 

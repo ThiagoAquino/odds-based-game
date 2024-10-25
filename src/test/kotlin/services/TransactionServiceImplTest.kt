@@ -3,7 +3,7 @@ package services
 import dto.enum.TransactionTypeEnum
 import odds.domain.Player
 import odds.domain.Transaction
-import odds.dto.CreateTransactionDTO
+import odds.dto.CreateTransactionRequest
 import odds.repositories.TransactionRepository
 import odds.services.PlayerService
 import odds.services.TransactionServiceImpl
@@ -36,7 +36,7 @@ class TransactionServiceImplTest {
 
     private lateinit var player: Player
 
-    private lateinit var createTransactionDTO: CreateTransactionDTO
+    private lateinit var createTransactionRequest: CreateTransactionRequest
 
 
     @BeforeEach
@@ -46,8 +46,8 @@ class TransactionServiceImplTest {
         this.transaction =
             Transaction(id = 1, playerId = this.player.id, amount = 100.0, type = TransactionTypeEnum.BET)
 
-        this.createTransactionDTO =
-            CreateTransactionDTO(playerUsername = this.player.username, amount = 100.0, type = TransactionTypeEnum.BET)
+        this.createTransactionRequest =
+            CreateTransactionRequest(playerUsername = this.player.username, amount = 100.0, type = TransactionTypeEnum.BET)
     }
 
     @Test
@@ -56,10 +56,10 @@ class TransactionServiceImplTest {
         whenever(this.playerService.updatePlayerAmount(any())).thenReturn(Mono.just(this.player))
         whenever(this.transactionRepository.save(any())).thenReturn(Mono.just(this.transaction))
 
-        val result = this.transactionServiceImpl.registerTransaction(this.createTransactionDTO)
+        val result = this.transactionServiceImpl.registerTransaction(this.createTransactionRequest)
 
         StepVerifier.create(result)
-            .expectNextMatches { it.amount == this.createTransactionDTO.amount }
+            .expectNextMatches { it.amount == this.createTransactionRequest.amount }
             .verifyComplete()
 
     }

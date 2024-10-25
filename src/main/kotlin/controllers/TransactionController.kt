@@ -1,6 +1,6 @@
 package odds.controllers
 
-import odds.dto.CreateTransactionDTO
+import odds.dto.CreateTransactionRequest
 import odds.dto.TransactionResponse
 import odds.services.TransactionService
 import org.springframework.beans.factory.annotation.Autowired
@@ -21,8 +21,8 @@ class TransactionController @Autowired constructor(
     }
 
     @PostMapping("/deposit")
-    fun depositCredit(@RequestBody createTransactionDTO: CreateTransactionDTO): Mono<TransactionResponse> {
-        return this.transactionService.registerTransaction(createTransactionDTO)
-            .map { TransactionResponse(it.id, createTransactionDTO.playerUsername, it.amount, it.type) }
+    fun depositCredit(@RequestBody createTransactionRequest: CreateTransactionRequest): Mono<TransactionResponse> {
+        return this.transactionService.registerTransaction(createTransactionRequest)
+            .map { TransactionResponse(it.id, createTransactionRequest.playerUsername, it.amount, it.type) }
     }
 }

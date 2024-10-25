@@ -12,6 +12,5 @@ data class CreatePlayerRequest(
     val surname: String,
     @field:NotBlank(message = "Username cannot be blank")
     @field:Size(min = 3, max = 32, message = "Username must be between 3 and 32 characters")
-    @field:Pattern("^(?!leaderboard$)[a-zA-Z0-9_]{3,32}$")
     val username: String,
 )

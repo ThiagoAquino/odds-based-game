@@ -4,7 +4,7 @@ import dto.enum.TransactionTypeEnum
 import odds.controllers.TransactionController
 import odds.domain.Player
 import odds.domain.Transaction
-import odds.dto.CreateTransactionDTO
+import odds.dto.CreateTransactionRequest
 import odds.dto.TransactionResponse
 import odds.services.TransactionService
 import org.junit.jupiter.api.BeforeEach
@@ -33,7 +33,7 @@ class TransactionControllerTest {
 
     private lateinit var transaction: Transaction
 
-    private lateinit var createTransactionDTO: CreateTransactionDTO
+    private lateinit var createTransactionRequest: CreateTransactionRequest
 
     private lateinit var player: Player
 
@@ -50,7 +50,7 @@ class TransactionControllerTest {
             type = TransactionTypeEnum.DEPOSIT
         )
 
-        this.createTransactionDTO = CreateTransactionDTO(
+        this.createTransactionRequest = CreateTransactionRequest(
             playerUsername = this.player.username,
             amount = 200.0,
             type = TransactionTypeEnum.DEPOSIT
@@ -76,7 +76,7 @@ class TransactionControllerTest {
         val transactionResponse =
             TransactionResponse(
                 this.transaction.id,
-                this.createTransactionDTO.playerUsername,
+                this.createTransactionRequest.playerUsername,
                 this.transaction.amount,
                 this.transaction.type
             )
@@ -85,12 +85,12 @@ class TransactionControllerTest {
 
         this.webTestClient.post()
             .uri("/transaction/deposit")
-            .bodyValue(this.createTransactionDTO)
+            .bodyValue(this.createTransactionRequest)
             .exchange()
             .expectStatus().isOk
             .expectBody(TransactionResponse::class.java)
             .isEqualTo(transactionResponse)
 
-        Mockito.verify(this.transactionService).registerTransaction(this.createTransactionDTO)
+        Mockito.verify(this.transactionService).registerTransaction(this.createTransactionRequest)
     }
 }

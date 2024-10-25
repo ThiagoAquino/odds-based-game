@@ -3,7 +3,7 @@ package controllers
 import dto.PlayerResponse
 import odds.controllers.PlayerController
 import odds.domain.Player
-import odds.dto.CreatePlayerDTO
+import odds.dto.CreatePlayerRequest
 import odds.dto.LeaderboardResponse
 import odds.services.PlayerService
 import org.junit.jupiter.api.BeforeEach
@@ -40,7 +40,7 @@ class PlayerControllerTest {
 
     @Test
     fun `register player should register a player successfully`() {
-        val createPlayerDTO = CreatePlayerDTO("Maria", "Silva", "mas")
+        val createPlayerRequest = CreatePlayerRequest("Maria", "Silva", "mas")
         val playerResponse = PlayerResponse(
             this.player.id,
             this.player.name,
@@ -53,13 +53,13 @@ class PlayerControllerTest {
 
         this.webTestClient.post()
             .uri("/player")
-            .bodyValue(createPlayerDTO)
+            .bodyValue(createPlayerRequest)
             .exchange()
             .expectStatus().isOk
             .expectBody(PlayerResponse::class.java)
             .isEqualTo(playerResponse)
 
-        Mockito.verify(this.playerService).registerPlayer(createPlayerDTO)
+        Mockito.verify(this.playerService).registerPlayer(createPlayerRequest)
     }
 
     @Test

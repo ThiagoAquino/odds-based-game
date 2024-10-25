@@ -5,7 +5,7 @@ import odds.controllers.BetController
 import odds.domain.Bet
 import odds.domain.Player
 import odds.dto.BetResponse
-import odds.dto.CreateBetDTO
+import odds.dto.CreateBetRequest
 import odds.services.BetService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -55,7 +55,7 @@ class BetControllerTest {
 
     @Test
     fun `place bet should place a bet and return BetResponse`() {
-        val createBetDTO = CreateBetDTO(this.player.username, 100.0, 5)
+        val createBetRequest = CreateBetRequest(this.player.username, 100.0, 5)
         val betResponse = BetResponse(
             id = this.bet.id,
             playerId = this.bet.playerId,
@@ -70,13 +70,13 @@ class BetControllerTest {
 
         this.webTestClient.post()
             .uri("/bet/placeBet")
-            .bodyValue(createBetDTO)
+            .bodyValue(createBetRequest)
             .exchange()
             .expectStatus().isOk
             .expectBody(BetResponse::class.java)
             .isEqualTo(betResponse)
 
-        Mockito.verify(this.betService).placeBet(createBetDTO.username, createBetDTO.betAmount, createBetDTO.betNumber)
+        Mockito.verify(this.betService).placeBet(createBetRequest.username, createBetRequest.betAmount, createBetRequest.betNumber)
     }
 
     @Test

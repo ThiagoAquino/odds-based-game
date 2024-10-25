@@ -1,7 +1,7 @@
 package odds.controllers
 
 import odds.dto.BetResponse
-import odds.dto.CreateBetDTO
+import odds.dto.CreateBetRequest
 import odds.services.BetService
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
@@ -15,7 +15,7 @@ class BetController @Autowired constructor(
 ) {
 
     @PostMapping("/placeBet")
-    fun placeBet(@RequestBody betRequest: CreateBetDTO): Mono<BetResponse> {
+    fun placeBet(@RequestBody betRequest: CreateBetRequest): Mono<BetResponse> {
         return this.betService.placeBet(
             betRequest.username,
             betRequest.betAmount,

@@ -1,10 +1,12 @@
 package odds.controllers
 
-import odds.dto.CreatePlayerDTO
+import odds.dto.CreatePlayerRequest
 import odds.dto.LeaderboardResponse
 import dto.PlayerResponse
 import odds.services.PlayerService
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.data.annotation.QueryAnnotation
+import org.springframework.data.r2dbc.repository.Query
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -16,7 +18,7 @@ class PlayerController @Autowired constructor(
 ) {
 
     @PostMapping("")
-    fun registerPlayer(@RequestBody playerRequest: CreatePlayerDTO): Mono<PlayerResponse> {
+    fun registerPlayer(@RequestBody playerRequest: CreatePlayerRequest): Mono<PlayerResponse> {
         return playerService.registerPlayer(playerRequest).map {
             PlayerResponse(
                 id = it.id,
@@ -28,8 +30,8 @@ class PlayerController @Autowired constructor(
         }
     }
 
-    @GetMapping("/{username}")
-    fun getPlayer(@PathVariable username: String): Mono<PlayerResponse> {
+    @GetMapping("")
+    fun getPlayer(@RequestParam username: String): Mono<PlayerResponse> {
         return playerService.getPlayer(username)
             .map {
                 PlayerResponse(

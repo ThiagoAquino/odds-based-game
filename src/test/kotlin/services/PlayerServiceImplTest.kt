@@ -1,7 +1,7 @@
 package services
 
 import odds.domain.Player
-import odds.dto.CreatePlayerDTO
+import odds.dto.CreatePlayerRequest
 import odds.exceptions.AlreadyExistsException
 import odds.exceptions.NotFoundException
 import odds.repositories.PlayerRepository
@@ -64,25 +64,25 @@ class PlayerServiceImplTest {
 
     @Test
     fun `register player should return a new player`() {
-        val createPlayerDTO = CreatePlayerDTO("Thiago", "Santos", "tas")
+        val createPlayerRequest = CreatePlayerRequest("Thiago", "Santos", "tas")
         val newPlayer = Player(2, "Thiago", "Santos", "tas", 1000.0)
-        whenever(this.playerRepository.findByUsername(createPlayerDTO.username)).thenReturn(Mono.empty())
+        whenever(this.playerRepository.findByUsername(createPlayerRequest.username)).thenReturn(Mono.empty())
         whenever(this.playerRepository.save(any<Player>())).thenReturn(Mono.just(newPlayer))
 
-        val result = this.playerServiceImpl.registerPlayer(createPlayerDTO)
+        val result = this.playerServiceImpl.registerPlayer(createPlayerRequest)
 
         StepVerifier.create(result)
-            .expectNextMatches { it.username == createPlayerDTO.username }
+            .expectNextMatches { it.username == createPlayerRequest.username }
             .verifyComplete()
     }
 
     @Test
     fun `register player should throw AlreadyExists when found an username`() {
-        val createPlayerDTO = CreatePlayerDTO("Thiago", "Santos", "tas")
+        val createPlayerRequest = CreatePlayerRequest("Thiago", "Santos", "tas")
 
-        whenever(this.playerRepository.findByUsername(createPlayerDTO.username)).thenReturn(Mono.just(this.secondPlayer))
+        whenever(this.playerRepository.findByUsername(createPlayerRequest.username)).thenReturn(Mono.just(this.secondPlayer))
 
-        val result = this.playerServiceImpl.registerPlayer(createPlayerDTO)
+        val result = this.playerServiceImpl.registerPlayer(createPlayerRequest)
 
         StepVerifier.create(result)
             .expectError(AlreadyExistsException::class.java)

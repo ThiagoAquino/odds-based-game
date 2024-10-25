@@ -1,7 +1,7 @@
 package odds.services
 
 import odds.domain.Player
-import odds.dto.CreatePlayerDTO
+import odds.dto.CreatePlayerRequest
 import odds.exceptions.AlreadyExistsException
 import odds.exceptions.NotFoundException
 import odds.repositories.PlayerRepository
@@ -15,6 +15,9 @@ class PlayerServiceImpl @Autowired constructor(
     private val playerRepository: PlayerRepository
 ) : PlayerService {
 
+    /**
+     * Get player by username
+     */
     override fun getPlayer(username: String): Mono<Player> {
         return this.playerRepository.findByUsername(username)
             .switchIfEmpty(
@@ -22,24 +25,30 @@ class PlayerServiceImpl @Autowired constructor(
             )
     }
 
-    override fun registerPlayer(createPlayerDTO: CreatePlayerDTO): Mono<Player> {
-        return this.playerRepository.findByUsername(createPlayerDTO.username)
+    /**
+     * Create a new player
+     */
+    override fun registerPlayer(createPlayerRequest: CreatePlayerRequest): Mono<Player> {
+        return this.playerRepository.findByUsername(createPlayerRequest.username)       // Check if the username is free
             .flatMap<Player> {
-                Mono.error(AlreadyExistsException("Username ${createPlayerDTO.username} already exists."))
+                Mono.error(AlreadyExistsException("Username ${createPlayerRequest.username} already exists."))  // if not, throw exception
             }
-            .switchIfEmpty(
-                Mono.defer {
+            .switchIfEmpty(                                                                     // if it's free, create a new player
+                Mono.defer {                                                                    // used to daly the creation of the player
                     this.playerRepository.save(
                         Player(
-                            name = createPlayerDTO.name,
-                            surname = createPlayerDTO.surname,
-                            username = createPlayerDTO.username
+                            name = createPlayerRequest.name,
+                            surname = createPlayerRequest.surname,
+                            username = createPlayerRequest.username
                         )
                     )
                 }
             )
     }
 
+    /**
+     * Update the player amount
+     */
     override fun updatePlayerAmount(player: Player): Mono<Player> {
         return this.getPlayer(player.username)
             .flatMap {
@@ -48,10 +57,13 @@ class PlayerServiceImpl @Autowired constructor(
             }
     }
 
+    /**
+     * Return the leaderboard.
+     */
     override fun getLeaderboard(): Flux<Player> {
-        return this.playerRepository.findAll()
-            .sort(compareByDescending { it.balance })
-            .take(10)
+        return this.playerRepository.findAll()                      // get all the player
+            .sort(compareByDescending { it.balance })               // order by descendent
+            .take(10)                                           // limited by 10 users
     }
 
 }
