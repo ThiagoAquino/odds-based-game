@@ -44,7 +44,7 @@ This project is an implementation of a simple betting game based on odds. It is 
      }
      ```
 
-- **GET** `/player/{username}`  
+- **GET** `/player?username={username}`  
   Retrieves the details of a player by their username.
    - **Response**:
      ```json
